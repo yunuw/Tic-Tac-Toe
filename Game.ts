@@ -95,6 +95,10 @@ export class Game {
         this.askForPlayAgain();
     }
 
+    /**
+     * Ask the user whether they want to play again. 
+     * If yes, start a new game, otherwise, end the game.
+     */
     private askForPlayAgain() {
         let hint: string = `Want to play again?\nAnswer(yes or no):`;
 

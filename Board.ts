@@ -117,10 +117,18 @@ export class Board {
         return Constants.BoardStatus.Unfinished;
     }
 
+    /**
+     * Given the move, return the winner of the game.
+     * @param {Move} move - The latest move made by the corresponding player.
+     */
     private getWinner(move: Move): Constants.BoardStatus {
         return move.side === Constants.Side.O ? Constants.BoardStatus.OWin : Constants.BoardStatus.XWin;
     }
 
+    /**
+     * Given the move, check if the corresponding player win on the horizontal direction.
+     * @param {Move} move - The latest move made by the corresponding player.
+     */
     private checkWinnerHorizontal(move: Move): boolean {
         for (let row: number = 0; row < this.boardSize; row++) {
             if (this.board[row][move.col] !== this.board[move.row][move.col]) {
@@ -131,6 +139,10 @@ export class Board {
         return true;
     }
 
+    /**
+     * Given the move, check if the corresponding player win on the vertical direction.
+     * @param {Move} move - The latest move made by the corresponding player.
+     */
     private checkWinnerVertical(move: Move): boolean {
         for (let col: number = 0; col < this.boardSize; col++) {
             if (this.board[move.row][col] !== this.board[move.row][move.col]) {
@@ -177,6 +189,9 @@ export class Board {
         return false;
     }
 
+    /**
+     * Check whether the board is already full of moves
+     */
     private checkFullBoard(): boolean {
         for (let row: number = 0; row < this.boardSize; row++) {
             for (let col: number = 0; col < this.boardSize; col++) {
