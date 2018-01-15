@@ -10,3 +10,5 @@ export enum BoardStatus {
     Draw,
     Unfinished
 }
+
+export let BoardSize: number = 3;

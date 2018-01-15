@@ -8,10 +8,9 @@ export class Move {
     row: number;
     col: number;
 
-    constructor(side: Side, x: number, y: number) {
+    constructor(side: Side, r: number, c: number) {
         this.side = side;
-        this.row = x;
-        this.col = y;
+        this.row = r;
+        this.col = c;
     }
 }
-

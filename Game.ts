@@ -10,6 +10,7 @@ export class Game {
     playerO: Player;
     currentPlayer: Player;
     rl: readline.ReadLine;
+    readonly InputSize: number = 3;
 
     /**
      * Set the board and players ready for a new game.
@@ -25,9 +26,12 @@ export class Game {
         });
     }
 
+    /**
+     * Start a new game.
+     */
     startNewGame() {
         this.board.display();
-        let player: string = this.currentPlayer == this.playerX ? "X" : "O";
+        let player: string = this.currentPlayer === this.playerX ? "X" : "O";
         let hint: string = `Player ${player}'s turn. Pick a square.\n(row, col): `;
         this.askForMove(hint);
     }
@@ -38,63 +42,88 @@ export class Game {
      * @param hint 
      */
     private askForMove(hint: string) {
-        this.rl.question(hint, (answer: string) => {
-            let x: number = Number(answer.charAt(0));
-            let y: number = Number(answer.charAt(2));
-            let currentMove: Move = new Move(this.currentPlayer.side, x, y);
+        this.rl.question(hint, (input: string) => {
+            let row: number = Number(input[0]);
+            let col: number = Number(input[2]);
+            let currentMove: Move = new Move(this.currentPlayer.side, row, col);
 
-            if (this.board.isValidMove(currentMove)) {
+            if (this.isValidInput(input) && this.board.isValidMove(currentMove)) {
                 this.board.update(currentMove);
-
                 let boardStatus: Constants.BoardStatus = this.board.checkWinner(currentMove);
-                if (boardStatus == Constants.BoardStatus.Unfinished) {
-                    this.currentPlayer = this.currentPlayer == this.playerO ? this.playerX : this.playerO;
-                    let player: string = this.currentPlayer == this.playerX ? "X" : "O";
+
+                if (boardStatus === Constants.BoardStatus.Unfinished) {
                     this.board.display();
+                    this.currentPlayer = this.currentPlayer === this.playerO ? this.playerX : this.playerO;
+                    let player: string = this.currentPlayer === this.playerX ? "X" : "O";
                     this.askForMove(`Player ${player}'s turn. Pick a square.\n(row, col): `);
                 }
                 else {
-                    let result: string;
-
-                    if (boardStatus == Constants.BoardStatus.XWin) {
-                        result = "X wins!";
-                        this.playerX.numOfWins++;
-                    }
-                    else if (boardStatus == Constants.BoardStatus.OWin) {
-                        result = "O wins!";
-                        this.playerO.numOfWins++;
-                    }
-                    else {
-                        result = "Draw.";
-                    }
-
-                    this.printResult(result);
+                    this.printResult(boardStatus);
                 }
+
             }
             else {
                 this.board.display();
-                this.askForMove(`Invalid move: ${answer}. Pick a square.\n(row, col): `);
+                this.askForMove(`Invalid move: ${input}. Pick a square.\n(row, col): `);
             }
         });
     }
 
     /**
      * When a game is finished, print out the result and ask for further action.
-     * @param {string} result - the result of a game
+     * @param {Constants.BoardStatus} boardStatus - the result of a game
      */
-    private printResult(result: string) {
-        result += `\nCurrent number of wins:\nPlayer X: ${this.playerX.numOfWins}, Player O: ${this.playerO.numOfWins}\nPlay again?\nAnswer(yes or no):`;
-        this.board.display();
+    private printResult(boardStatus: Constants.BoardStatus) {
+        let result: string;
 
-        this.rl.question(result, (answer: string) => {
-            if (answer == "yes") {
+        if (boardStatus === Constants.BoardStatus.XWin) {
+            result = "X wins!";
+            this.playerX.numOfWins++;
+        }
+        else if (boardStatus === Constants.BoardStatus.OWin) {
+            result = "O wins!";
+            this.playerO.numOfWins++;
+        }
+        else {
+            result = "Draw.";
+        }
+
+        result += `\nLatest number of wins:\n`
+            + `Player X: ${this.playerX.numOfWins}, Player O: ${this.playerO.numOfWins}\n`;
+        this.board.display();
+        process.stdout.write(result);
+        this.askForPlayAgain();
+    }
+
+    private askForPlayAgain() {
+        let hint: string = `Want to play again?\nAnswer(yes or no):`;
+
+        this.rl.question(hint, (answer: string) => {
+            if (answer === "yes") {
                 this.board.reset();
                 this.startNewGame();
             }
-            else if (answer == "no") {
-                process.stdout.write("See you!\n");
+            else if (answer === "no") {
+                process.stdout.write("Thank you! See you next time!\n");
                 this.rl.close();
             }
+            else {
+                this.askForPlayAgain();
+            }
         });
+    }
+
+    /**
+     * Given the input, check whether it's of the right format.
+     * @param {string} input - the input of current player.
+     */
+    private isValidInput(input: string): boolean {
+        if (input.length !== this.InputSize
+            || input[0] === " " || input[2] === " " || input[1] !== ","
+            || isNaN(Number(input[0])) || isNaN(Number(input[2]))) {
+            return false;
+        }
+
+        return true;
     }
 }
