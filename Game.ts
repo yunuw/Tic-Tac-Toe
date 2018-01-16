@@ -104,6 +104,7 @@ export class Game {
         this.rl.question(hint, (answer: string) => {
             if (answer === "yes") {
                 this.board.reset();
+                this.currentPlayer = this.playerX;
                 this.startNewGame();
             }
             else if (answer === "no") {

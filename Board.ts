@@ -177,7 +177,7 @@ export class Board {
     private checkWinnerDiagonalR2L(move: Move): boolean {
         if (move.row + move.col === this.boardSize - 1) {
             for (let pos: number = 0; pos < this.boardSize; pos++) {
-                if (this.board[pos][this.boardSize - pos] != this.board[move.row][move.col]) {
+                if (this.board[pos][this.boardSize - pos - 1] != this.board[move.row][move.col]) {
                     return false;
                 }
             }
