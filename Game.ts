@@ -59,8 +59,8 @@ export class Game {
                 }
                 else {
                     this.printResult(boardStatus);
+                    this.askForPlayAgain();
                 }
-
             }
             else {
                 this.board.display();
@@ -92,7 +92,6 @@ export class Game {
             + `Player X: ${this.playerX.numOfWins}, Player O: ${this.playerO.numOfWins}\n`;
         this.board.display();
         process.stdout.write(result);
-        this.askForPlayAgain();
     }
 
     /**
@@ -119,6 +118,7 @@ export class Game {
 
     /**
      * Given the input, check whether it's of the right format.
+     * Note: If it is an empty character, Number() will convert it into 0, thus we need to check whether it's empty. 
      * @param {string} input - the input of current player.
      */
     private isValidInput(input: string): boolean {

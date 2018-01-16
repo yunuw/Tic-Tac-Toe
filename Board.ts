@@ -56,7 +56,6 @@ export class Board {
      * Display the board with the moves made by the players
      */
     display() {
-        // TODO: change display according to board size
         process.stdout.write("   0   1   2  \n");
 
         for (var row = 0; row < this.boardSize; row++) {
